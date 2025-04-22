@@ -1,0 +1,8 @@
+- name: Setup containers
+  hosts: all
+  become: yes
+  roles:
+    - docker
+    - postgres
+    - keycloak
+    - nginx

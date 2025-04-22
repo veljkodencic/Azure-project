@@ -1,0 +1,17 @@
+- name: Run Keycloak container
+  docker_container:
+    name: keycloak
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    env:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: 172.17.0.1
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloakpass
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres

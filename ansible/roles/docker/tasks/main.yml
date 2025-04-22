@@ -1,0 +1,14 @@
+- name: Install Docker
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - docker.io
+    - docker-compose
+
+- name: Enable Docker
+  service:
+    name: docker
+    state: started
+    enabled: true

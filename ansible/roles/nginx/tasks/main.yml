@@ -1,0 +1,13 @@
+- name: Copy static site
+  copy:
+    src: ../../static-site/index.html
+    dest: /home/azureuser/index.html
+
+- name: Run Nginx container
+  docker_container:
+    name: nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - /home/azureuser/index.html:/usr/share/nginx/html/index.html:ro
