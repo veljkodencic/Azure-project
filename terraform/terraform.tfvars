@@ -1,5 +1,5 @@
 ssh_public_key_path = "~/.ssh/id_rsa.pub"
-subscription_id = var.subscription_id
-client_id       = var.client_id
-client_secret   = var.client_secret
-tenant_id       = var.tenant_id
+subscription_id = "dc8712d9-abc1-4649-a24f-c703982359f3"
+client_id       = "1537eb95-f2d3-4bc8-8bf9-e1e774c1ba8c"
+client_secret   = "_OW8Q~ckKCJu0oh.pgJRyv803TpsU6zHOTU2rdye"
+tenant_id       = "facaf52a-b6a1-4c5c-b829-15ead5e90e36"
