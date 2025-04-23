@@ -94,9 +94,14 @@ resource "azurerm_network_interface" "main" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.main.id
   }
+}
 
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = azurerm_network_security_group.main.id
 }
+
+
 
 resource "azurerm_linux_virtual_machine" "main" {
   name                = "keycloak-vm"
