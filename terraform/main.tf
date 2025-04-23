@@ -1,9 +1,6 @@
 provider "azurerm" {
   features {}
-
-  subscription_id = "dc8712d9-abc1-4649-a24f-c703982359f3"
 }
-
 
 resource "azurerm_resource_group" "main" {
   name     = "keycloak-rg"
@@ -98,10 +95,6 @@ resource "azurerm_network_interface" "main" {
     public_ip_address_id          = azurerm_public_ip.main.id
   }
 
-}
-
-resource "azurerm_network_interface_security_group_association" "main" {
-  network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = azurerm_network_security_group.main.id
 }
 
@@ -128,8 +121,8 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
+    offer     = "UbuntuServer"
+    sku       = "20_04-lts-gen2"
     version   = "latest"
   }
 
