@@ -83,7 +83,7 @@ resource "azurerm_linux_virtual_machine" "main" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file(var.ssh_public_key_path)
+    public_key = file(abspath(var.ssh_public_key_path))  # Ensure the path is absolute
   }
 
   source_image_reference {
