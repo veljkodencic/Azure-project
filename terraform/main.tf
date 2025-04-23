@@ -4,7 +4,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "main" {
   name     = "keycloak-rg"
-  location = var.location
+  location = "West Europe"
 }
 
 resource "azurerm_virtual_network" "main" {
@@ -27,44 +27,8 @@ resource "azurerm_network_security_group" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   security_rule {
-    name                       = "AllowHTTP"
+    name                       = "SSH"
     priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "AllowHTTPS"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "AllowKeycloak"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "8080"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "AllowSSH"
-    priority                   = 1004
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -76,7 +40,7 @@ resource "azurerm_network_security_group" "main" {
 }
 
 resource "azurerm_public_ip" "main" {
-  name                = "keycloak-public-ip"
+  name                = "keycloak-pip"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   allocation_method   = "Static"
@@ -89,7 +53,7 @@ resource "azurerm_network_interface" "main" {
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
-    name                          = "keycloak-ipconfig"
+    name                          = "internal"
     subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.main.id
@@ -101,35 +65,36 @@ resource "azurerm_network_interface_security_group_association" "main" {
   network_security_group_id = azurerm_network_security_group.main.id
 }
 
-
-
 resource "azurerm_linux_virtual_machine" "main" {
   name                = "keycloak-vm"
-  location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
   size                = "Standard_B1s"
   admin_username      = "azureuser"
   network_interface_ids = [
     azurerm_network_interface.main.id
   ]
+  disable_password_authentication = true
 
   admin_ssh_key {
     username   = "azureuser"
     public_key = file(var.ssh_public_key_path)
   }
 
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    name                 = "keycloak-os-disk"
-  }
-
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "20_04-lts-gen2"
+    sku       = "20_04-lts"
     version   = "latest"
   }
 
-  disable_password_authentication = true
+  os_disk {
+    name              = "keycloak-osdisk"
+    caching           = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+}
+
+output "public_ip" {
+  value = azurerm_public_ip.main.ip_address
 }
